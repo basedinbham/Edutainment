@@ -8,11 +8,22 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var timesTable = 0
-    @State private var questionCount = 5
-    @State private var answer = ""
+    @State private var gameState = false
     
-    let questions = [5, 10, 20]
+    // Selected table to practice
+    @State private var timesTable = 0
+    // Number of questions selected
+    @State private var questionCountSet = 5
+    @State private var answer = ""
+    @State private var questionNumber = 0
+    
+    @State private var questionText = ""
+    @State private var correct = 0
+    @State private var incorrect = 0
+    // Array of questions to be asked
+    @State private var questions = [Int]()
+    
+    let questionCount = [5, 10, 20]
     
     
     var body: some View {
@@ -51,18 +62,25 @@ struct ContentView: View {
                                 }
                                 
                                 Section {
-                                    Picker("How Many Questions Do You Want?", selection: $questionCount) {
-                                        ForEach(questions, id: \.self) {
+                                    Picker("How Many Questions Do You Want?", selection: $questionCountSet) {
+                                        ForEach(questionCount, id: \.self) {
                                             Text("\($0)")
                                         }
                                     }
                                     .pickerStyle(.segmented)
+                                    
+                                    Text(questionText)
                                 } header: {
                                     Text("How Many Questions Do You Want?")
                                 }
                                 
                                 Section {
                                     TextField("Enter your answer", text: $answer)
+                                    
+                                    Button("Submit") {
+                                        
+                                    }
+                                    .frame(maxWidth: .infinity, alignment: .center)
                                 }
                                 .keyboardType(.numberPad)
                             }
@@ -82,10 +100,25 @@ struct ContentView: View {
             }
         }
     }
+    
+    
+    func startQuestions() {
+        for _ in 0..<questionNumber {
+            questions.append(Int.random(in: 2...12))
+        }
+        gameState.toggle()
+        nextQuestion()
+    }
+    
+    func nextQuestion() {
+        questionText = ("What is \(timesTable) * \(questions[questionNumber])?")
+    }
 }
+
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
     }
 }
+
